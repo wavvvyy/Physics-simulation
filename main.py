@@ -4,7 +4,7 @@ from settings import *
 def createObect(space, position, data):
 	body = pymunk.Body(data['mass'], data['inertia'], body_type = data['body_type'])
 	body.position = position
-	shape = pymunk.Circle(body, data['radius'])
+	shape = pymunk.Circle(body, data['hitbox'])
 	
 	space.add(body, shape)
 	return shape
@@ -13,7 +13,11 @@ def drawObject(obj_list, data):
 	for obj in obj_list:
 		pos_x = int(obj.body.position.x)
 		pos_y = int(obj.body.position.y)
-		pygame.draw.circle(screen, data['color'],(pos_x,pos_y), data['radius'])
+		if data['path']:
+			rect = apple_surface.get_rect(center = (pos_x,pos_y))
+			screen.blit(apple_surface,rect)
+		else:	
+			pygame.draw.circle(screen, data['color'],(pos_x,pos_y), data['radius'])
 
 def GameLoop():
 	drawObject(apples, apple_data)
@@ -28,6 +32,8 @@ space.gravity = (0,500)
 
 apples = []
 balls = []
+
+apple_surface = pygame.transform.scale(pygame.image.load('apple.png'),(apple_data['radius']*2,apple_data['radius']*2))
 
 while True:
 	for event in pygame.event.get():
